@@ -10,6 +10,7 @@ export default function FormMateria() {
   });
   const [addMateria, setAddMateria] = useState("");
   const [erro, setErro] = useState("");
+  const [pesquisa, setPesquisa] = useState("");
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -45,6 +46,10 @@ export default function FormMateria() {
     localStorage.setItem(CHAVE_STORAGE, JSON.stringify(materia));
   }, [materia]);
 
+  const materiasFiltradas = materia.filter((item) =>
+    item.nome.toLowerCase().includes(pesquisa.toLowerCase()),
+  );
+
   return (
     <div className={styles.formMateria}>
       <form onSubmit={handleSubmit}>
@@ -59,9 +64,17 @@ export default function FormMateria() {
         />
         <button>Adicionar Materia</button>
       </form>
+
+      <input
+        type="text"
+        placeholder="Pesquisar por Materia"
+        value={pesquisa}
+        onChange={(e) => setPesquisa(e.target.value)}
+      />
+
       <p>Total de Materias: {materia.length}</p>
       <ul>
-        {materia.map((item) => (
+        {materiasFiltradas.map((item) => (
           <li key={item.id}>
             <span
               onClick={() => handleToggleConcluido(item.id)}
