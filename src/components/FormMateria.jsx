@@ -21,6 +21,12 @@ export default function FormMateria() {
     setAddMateria("");
   }
 
+  function handleDelete(id) {
+    const confirmação = confirm("Tem certeza que deseja deletar?");
+    if (!confirmação) return;
+    setMateria(materia.filter((item) => item.id !== id));
+  }
+
   return (
     <div className={styles.formMateria}>
       <form onSubmit={handleSubmit}>
@@ -37,7 +43,10 @@ export default function FormMateria() {
       </form>
       <ul>
         {materia.map((item) => (
-          <li key={item.id}>{item.nome}</li>
+          <li key={item.id}>
+            {item.nome}
+            <button onClick={() => handleDelete(item.id)}>X</button>
+          </li>
         ))}
       </ul>
       {erro && <p>{erro}</p>}
