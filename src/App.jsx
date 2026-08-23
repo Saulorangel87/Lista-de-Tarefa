@@ -1,12 +1,12 @@
 import styles from './App.module.css'
-import FormMateria from './components/FormMateria';
+import FormTarefas from './components/FormTarefas';
 import Header from './components/Header'
 
 function App() {
   return (
     <div className={styles.app}>
       <Header />
-      <FormMateria />
+      <FormTarefas />
     </div>
   )
 }

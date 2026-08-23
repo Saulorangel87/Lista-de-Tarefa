@@ -1,80 +1,80 @@
 import { useEffect, useState } from "react";
-import styles from "./FormMateria.module.css";
+import styles from "./FormTarefas.module.css";
 
-const CHAVE_STORAGE = "materia";
+const CHAVE_STORAGE = "tarefas";
 
-export default function FormMateria() {
-  const [materia, setMateria] = useState(() => {
+export default function FormTarefas() {
+  const [tarefa, setTarefas] = useState(() => {
     const dadosSalvo = localStorage.getItem(CHAVE_STORAGE);
     return dadosSalvo ? JSON.parse(dadosSalvo) : [];
   });
-  const [addMateria, setAddMateria] = useState("");
+  const [addTarefa, setAddTarefa] = useState("");
   const [erro, setErro] = useState("");
   const [pesquisa, setPesquisa] = useState("");
 
   function handleSubmit(e) {
     e.preventDefault();
-    if (!addMateria.trim()) {
-      setErro("Digite o nome da materia!");
+    if (!addTarefa) {
+      setErro("Digite o nome da tarefa!");
       return;
     }
     setErro("");
-    const novaMateria = {
+    const novaTarefa = {
       id: Date.now(),
-      nome: addMateria,
+      nome: addTarefa,
       concluida: false,
     };
-    setMateria([...materia, novaMateria]);
-    setAddMateria("");
+    setTarefas([...tarefa, novaTarefa]);
+    setAddTarefa("");
   }
 
   function handleDelete(id) {
     const confirmação = confirm("Tem certeza que deseja deletar?");
     if (!confirmação) return;
-    setMateria(materia.filter((item) => item.id !== id));
+    setTarefas(tarefa.filter((item) => item.id !== id));
   }
 
   function handleToggleConcluido(id) {
-    setMateria(
-      materia.map((item) =>
+    setTarefas(
+      tarefa.map((item) =>
         item.id === id ? { ...item, concluida: !item.concluida } : item,
       ),
     );
   }
 
   useEffect(() => {
-    localStorage.setItem(CHAVE_STORAGE, JSON.stringify(materia));
-  }, [materia]);
+    localStorage.setItem(CHAVE_STORAGE, JSON.stringify(tarefa));
+  }, [tarefa]); 
 
-  const materiasFiltradas = materia.filter((item) =>
+  const tarefasFiltradas = tarefa.filter((item) =>
     item.nome.toLowerCase().includes(pesquisa.toLowerCase()),
   );
 
   return (
-    <div className={styles.formMateria}>
+    <div className={styles.formTarefa}>
       <form onSubmit={handleSubmit}>
-        <label htmlFor="nome">Nome da Materia:</label>
+        <label htmlFor="nome">Nome da Tarefa:</label>
         <input
           type="text"
           id="nome"
           name="nome"
-          placeholder="Nome da Materia"
-          value={addMateria}
-          onChange={(e) => setAddMateria(e.target.value)}
+          placeholder="Nome da Tarefa"
+          value={addTarefa}
+          onChange={(e) => setAddTarefa(e.target.value)}
         />
-        <button>Adicionar Materia</button>
+        <button>Adicionar Tarefas</button>
       </form>
 
       <input
         type="text"
-        placeholder="Pesquisar por Materia"
+        placeholder="Pesquisar por Tarefa"
         value={pesquisa}
         onChange={(e) => setPesquisa(e.target.value)}
       />
 
-      <p>Total de Materias: {materia.length}</p>
+      <p>Total de Tarefas: {tarefa.length}</p>
       <ul>
-        {materiasFiltradas.map((item) => (
+        {tarefasFiltradas.map((item) => (
           <li key={item.id}>
             <span
               onClick={() => handleToggleConcluido(item.id)}
