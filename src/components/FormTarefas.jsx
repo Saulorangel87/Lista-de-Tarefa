@@ -11,6 +11,7 @@ export default function FormTarefas() {
   const [addTarefa, setAddTarefa] = useState("");
   const [erro, setErro] = useState("");
   const [pesquisa, setPesquisa] = useState("");
+  const [filtroStatus, setFiltroStatus] = useState("Todos");
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -44,10 +45,30 @@ export default function FormTarefas() {
 
   useEffect(() => {
     localStorage.setItem(CHAVE_STORAGE, JSON.stringify(tarefa));
-  }, [tarefa]); 
+  }, [tarefa]);
 
-  const tarefasFiltradas = tarefa.filter((item) =>
-    item.nome.toLowerCase().includes(pesquisa.toLowerCase()),
+  const tarefasFiltradas = tarefa
+    .filter((item) => item.nome.toLowerCase().includes(pesquisa.toLowerCase()))
+    .filter((item) => {
+      if (filtroStatus === "Todos") {
+        return true;
+      } else if (filtroStatus === "Pendentes") {
+        return item.concluida === false;
+      } else if (filtroStatus === "Concluídas") {
+        return item.concluida === true;
+      }
+    });
+
+  const contagemTarefasFiltradas = tarefasFiltradas.reduce(
+    (acumulador, item) => {
+      if (item.concluida) {
+        acumulador.concluidas++;
+      } else {
+        acumulador.pendentes++;
+      }
+      return acumulador;
+    },
+    { pendentes: 0, concluidas: 0 },
   );
 
   return (
@@ -72,7 +93,19 @@ export default function FormTarefas() {
         onChange={(e) => setPesquisa(e.target.value)}
       />
 
-      <p>Total de Tarefas: {tarefa.length}</p>
+      <select
+        value={filtroStatus}
+        onChange={(e) => setFiltroStatus(e.target.value)}
+      >
+        <option value="Todos">Todos</option>
+        <option value="Concluídas">Concluídas</option>
+        <option value="Pendentes">Pendentes</option>
+      </select>
+
+      <p>
+        Total: {tarefa.length} | Pendentes: {contagemTarefasFiltradas.pendentes}{" "}
+        | Concluídas: {contagemTarefasFiltradas.concluidas}
+      </p>
       <ul>
         {tarefasFiltradas.map((item) => (
           <li key={item.id}>
