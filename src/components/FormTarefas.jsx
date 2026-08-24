@@ -12,6 +12,8 @@ export default function FormTarefas() {
   const [erro, setErro] = useState("");
   const [pesquisa, setPesquisa] = useState("");
   const [filtroStatus, setFiltroStatus] = useState("Todos");
+  const [editarTarefa, setEditarTarefa] = useState(null);
+  const [editarTarefaNome, setEditarTarefaNome] = useState("");
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -41,6 +43,24 @@ export default function FormTarefas() {
         item.id === id ? { ...item, concluida: !item.concluida } : item,
       ),
     );
+  }
+
+  function handleIniciarEdicao(id, itemAtual) {
+    setEditarTarefa(id);
+    setEditarTarefaNome(itemAtual.nome);
+  }
+
+  function handleConfirmarEdicao(id, nome) {
+    setTarefas(
+      tarefa.map((item) => (item.id === id ? { ...item, nome: nome } : item)),
+    );
+    setEditarTarefa(null);
+    setEditarTarefaNome("");
+  }
+
+  function handleCancelarEdicao() {
+    setEditarTarefa(null);
+    setEditarTarefaNome("");
   }
 
   useEffect(() => {
@@ -109,16 +129,44 @@ export default function FormTarefas() {
       <ul>
         {tarefasFiltradas.map((item) => (
           <li key={item.id}>
-            <span
-              onClick={() => handleToggleConcluido(item.id)}
-              style={{
-                cursor: "pointer",
-                textDecoration: item.concluida ? "line-through" : "none",
-              }}
-            >
-              {item.nome}
-            </span>
-            <button onClick={() => handleDelete(item.id)}>X</button>
+            {editarTarefa === item.id ? (
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  handleConfirmarEdicao(item.id, editarTarefaNome);
+                }}
+              >
+                <label htmlFor="nome">Nome da Tarefa:</label>
+                <input
+                  type="text"
+                  id="nome"
+                  name="nome"
+                  placeholder="Nome da Tarefa"
+                  value={editarTarefaNome}
+                  onChange={(e) => setEditarTarefaNome(e.target.value)}
+                />
+                <button>Confirmar Edição</button>
+                <button onClick={handleCancelarEdicao} type="button">
+                  Cancelar Edição
+                </button>
+              </form>
+            ) : (
+              <>
+                <span
+                  onClick={() => handleToggleConcluido(item.id)}
+                  style={{
+                    cursor: "pointer",
+                    textDecoration: item.concluida ? "line-through" : "none",
+                  }}
+                >
+                  {item.nome}
+                </span>
+                <button onClick={() => handleDelete(item.id)}>X</button>
+                <button onClick={() => handleIniciarEdicao(item.id, item)}>
+                  Editar
+                </button>
+              </>
+            )}
           </li>
         ))}
       </ul>
