@@ -77,7 +77,8 @@ export default function FormTarefas() {
       } else if (filtroStatus === "Concluídas") {
         return item.concluida === true;
       }
-    });
+    })
+    .sort((a, b) => a.nome.localeCompare(b.nome));
 
   const contagemTarefasFiltradas = tarefasFiltradas.reduce(
     (acumulador, item) => {
