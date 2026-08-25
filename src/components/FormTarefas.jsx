@@ -14,6 +14,9 @@ export default function FormTarefas() {
   const [filtroStatus, setFiltroStatus] = useState("Todos");
   const [editarTarefa, setEditarTarefa] = useState(null);
   const [editarTarefaNome, setEditarTarefaNome] = useState("");
+  const [prioridade, setPrioridade] = useState("Média");
+  const [categoria, setCategoria] = useState("Pessoal");
+  const [filtroPrioridade, setFiltroPrioridade] = useState("Todos");
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -26,6 +29,8 @@ export default function FormTarefas() {
       id: Date.now(),
       nome: addTarefa,
       concluida: false,
+      prioridade: prioridade,
+      categoria: categoria,
     };
     setTarefas([...tarefa, novaTarefa]);
     setAddTarefa("");
@@ -78,6 +83,10 @@ export default function FormTarefas() {
         return item.concluida === true;
       }
     })
+    .filter((item) => {
+      if (filtroPrioridade === "Todos") return true;
+      return item.prioridade === filtroPrioridade;
+    })
     .sort((a, b) => a.nome.localeCompare(b.nome));
 
   const contagemTarefasFiltradas = tarefasFiltradas.reduce(
@@ -104,6 +113,23 @@ export default function FormTarefas() {
           value={addTarefa}
           onChange={(e) => setAddTarefa(e.target.value)}
         />
+        <select
+          value={prioridade}
+          onChange={(e) => setPrioridade(e.target.value)}
+        >
+          <option value="Baixa">Baixa</option>
+          <option value="Média">Média</option>
+          <option value="Alta">Alta</option>
+        </select>
+
+        <select
+          value={categoria}
+          onChange={(e) => setCategoria(e.target.value)}
+        >
+          <option value="Pessoal">Pessoal</option>
+          <option value="Trabalho">Trabalho</option>
+          <option value="Estudos">Estudos</option>
+        </select>
         <button>Adicionar Tarefas</button>
       </form>
 
@@ -121,6 +147,16 @@ export default function FormTarefas() {
         <option value="Todos">Todos</option>
         <option value="Concluídas">Concluídas</option>
         <option value="Pendentes">Pendentes</option>
+      </select>
+
+      <select
+        value={filtroPrioridade}
+        onChange={(e) => setFiltroPrioridade(e.target.value)}
+      >
+        <option value="Todos">Todos</option>
+        <option value="Baixa">Baixa</option>
+        <option value="Média">Média</option>
+        <option value="Alta">Alta</option>
       </select>
 
       <p>
@@ -160,7 +196,7 @@ export default function FormTarefas() {
                     textDecoration: item.concluida ? "line-through" : "none",
                   }}
                 >
-                  {item.nome}
+                  {item.nome} - {item.prioridade} - {item.categoria}
                 </span>
                 <button onClick={() => handleDelete(item.id)}>X</button>
                 <button onClick={() => handleIniciarEdicao(item.id, item)}>
