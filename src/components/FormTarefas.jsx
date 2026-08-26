@@ -17,6 +17,7 @@ export default function FormTarefas() {
   const [prioridade, setPrioridade] = useState("Média");
   const [categoria, setCategoria] = useState("Pessoal");
   const [filtroPrioridade, setFiltroPrioridade] = useState("Todos");
+  const [filtroCategoria, setFiltroCategoria] = useState("Todos");
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -86,6 +87,10 @@ export default function FormTarefas() {
     .filter((item) => {
       if (filtroPrioridade === "Todos") return true;
       return item.prioridade === filtroPrioridade;
+    })
+    .filter((item) => {
+      if (filtroCategoria === "Todos") return true;
+      return item.categoria === filtroCategoria;
     })
     .sort((a, b) => a.nome.localeCompare(b.nome));
 
@@ -159,6 +164,16 @@ export default function FormTarefas() {
         <option value="Alta">Alta</option>
       </select>
 
+      <select
+        value={filtroCategoria}
+        onChange={(e) => setFiltroCategoria(e.target.value)}
+      >
+        <option value="Todos">Todos</option>
+        <option value="Pessoal">Pessoal</option>
+        <option value="Trabalho">Trabalho</option>
+        <option value="Estudos">Estudos</option>
+      </select>
+
       <p>
         Total: {tarefa.length} | Pendentes: {contagemTarefasFiltradas.pendentes}{" "}
         | Concluídas: {contagemTarefasFiltradas.concluidas}
@@ -194,6 +209,7 @@ export default function FormTarefas() {
                   style={{
                     cursor: "pointer",
                     textDecoration: item.concluida ? "line-through" : "none",
+                    color: item.prioridade === "Alta" ? "red" : "black",
                   }}
                 >
                   {item.nome} - {item.prioridade} - {item.categoria}
