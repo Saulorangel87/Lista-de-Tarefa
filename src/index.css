@@ -1,0 +1,25 @@
+:root {
+  --bg-body: #f3f4f6;
+  --bg-card: #ffffff;
+  --text-primary: #1f2937;
+  --text-secondary: #6b7280;
+  --border-color: #d1d5db;
+  --primary: #6366f1;
+  --primary-hover: #4f46e5;
+}
+
+body.dark {
+  --bg-body: #111827;
+  --bg-card: #1f2937;
+  --text-primary: #f9fafb;
+  --text-secondary: #9ca3af;
+  --border-color: #374151;
+  --primary: #818cf8;
+  --primary-hover: #6366f1;
+}
+
+body {
+  background-color: var(--bg-body);
+  margin: 0;
+  transition: background-color 0.2s ease;
+}
