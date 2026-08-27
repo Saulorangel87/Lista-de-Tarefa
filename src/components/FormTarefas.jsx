@@ -106,6 +106,11 @@ export default function FormTarefas() {
     { pendentes: 0, concluidas: 0 },
   );
 
+  const contagemPorCategoria = tarefasFiltradas.reduce((acumulador, item) => {
+    acumulador[item.categoria] = (acumulador[item.categoria] || 0) + 1;
+    return acumulador;
+  }, {});
+
   return (
     <div className={styles.formTarefa}>
       <form onSubmit={handleSubmit}>
@@ -173,6 +178,14 @@ export default function FormTarefas() {
         <option value="Trabalho">Trabalho</option>
         <option value="Estudos">Estudos</option>
       </select>
+
+      <div>
+        {Object.entries(contagemPorCategoria).map(([categoria, quantidade]) => (
+          <p key={categoria}>
+            {categoria}: {quantidade}
+          </p>
+        ))}
+      </div>
 
       <p>
         Total: {tarefa.length} | Pendentes: {contagemTarefasFiltradas.pendentes}{" "}
