@@ -7,7 +7,7 @@ export default function FormTarefas() {
   const [tarefa, setTarefas] = useState(() => {
     const dadosSalvo = localStorage.getItem(CHAVE_STORAGE);
     try {
-    return dadosSalvo ? JSON.parse(dadosSalvo) : [];
+      return dadosSalvo ? JSON.parse(dadosSalvo) : [];
     } catch (error) {
       return [];
     }
@@ -74,7 +74,9 @@ export default function FormTarefas() {
   }
 
   function handleExcluirTudo() {
-    const confirmação = confirm("Tem certeza que deseja excluir todas as tarefas?");
+    const confirmação = confirm(
+      "Tem certeza que deseja excluir todas as tarefas?",
+    );
     if (!confirmação) return;
     setTarefas([]);
   }
@@ -121,11 +123,19 @@ export default function FormTarefas() {
     return acumulador;
   }, {});
 
+  // mapeia a prioridade pro nome da classe CSS correspondente
+  function classePrioridade(prioridade) {
+    if (prioridade === "Alta") return styles.prioridadeAlta;
+    if (prioridade === "Média") return styles.prioridadeMedia;
+    return styles.prioridadeBaixa;
+  }
+
   return (
     <div className={styles.formTarefa}>
-      <form onSubmit={handleSubmit}>
+      <form className={styles.formCadastro} onSubmit={handleSubmit}>
         <label htmlFor="nome">Nome da Tarefa:</label>
         <input
+          className={styles.inputTexto}
           type="text"
           id="nome"
           name="nome"
@@ -134,6 +144,7 @@ export default function FormTarefas() {
           onChange={(e) => setAddTarefa(e.target.value)}
         />
         <select
+          className={styles.select}
           value={prioridade}
           onChange={(e) => setPrioridade(e.target.value)}
         >
@@ -143,6 +154,7 @@ export default function FormTarefas() {
         </select>
 
         <select
+          className={styles.select}
           value={categoria}
           onChange={(e) => setCategoria(e.target.value)}
         >
@@ -150,105 +162,149 @@ export default function FormTarefas() {
           <option value="Trabalho">Trabalho</option>
           <option value="Estudos">Estudos</option>
         </select>
-        <button>Adicionar Tarefas</button>
+        <button className={styles.botaoPrimario}>Adicionar Tarefas</button>
+        {erro && <p className={styles.mensagemErro}>{erro}</p>}
       </form>
 
-      <input
-        type="text"
-        placeholder="Pesquisar por Tarefa"
-        value={pesquisa}
-        onChange={(e) => setPesquisa(e.target.value)}
-      />
+      <div className={styles.filtros}>
+        <input
+          className={styles.inputTexto}
+          type="text"
+          placeholder="Pesquisar por Tarefa"
+          value={pesquisa}
+          onChange={(e) => setPesquisa(e.target.value)}
+        />
 
-      <select
-        value={filtroStatus}
-        onChange={(e) => setFiltroStatus(e.target.value)}
-      >
-        <option value="Todos">Todos</option>
-        <option value="Concluídas">Concluídas</option>
-        <option value="Pendentes">Pendentes</option>
-      </select>
+        <select
+          className={styles.select}
+          value={filtroStatus}
+          onChange={(e) => setFiltroStatus(e.target.value)}
+        >
+          <option value="Todos">Todos</option>
+          <option value="Concluídas">Concluídas</option>
+          <option value="Pendentes">Pendentes</option>
+        </select>
 
-      <select
-        value={filtroPrioridade}
-        onChange={(e) => setFiltroPrioridade(e.target.value)}
-      >
-        <option value="Todos">Todos</option>
-        <option value="Baixa">Baixa</option>
-        <option value="Média">Média</option>
-        <option value="Alta">Alta</option>
-      </select>
+        <select
+          className={styles.select}
+          value={filtroPrioridade}
+          onChange={(e) => setFiltroPrioridade(e.target.value)}
+        >
+          <option value="Todos">Todos</option>
+          <option value="Baixa">Baixa</option>
+          <option value="Média">Média</option>
+          <option value="Alta">Alta</option>
+        </select>
 
-      <select
-        value={filtroCategoria}
-        onChange={(e) => setFiltroCategoria(e.target.value)}
-      >
-        <option value="Todos">Todos</option>
-        <option value="Pessoal">Pessoal</option>
-        <option value="Trabalho">Trabalho</option>
-        <option value="Estudos">Estudos</option>
-      </select>
+        <select
+          className={styles.select}
+          value={filtroCategoria}
+          onChange={(e) => setFiltroCategoria(e.target.value)}
+        >
+          <option value="Todos">Todos</option>
+          <option value="Pessoal">Pessoal</option>
+          <option value="Trabalho">Trabalho</option>
+          <option value="Estudos">Estudos</option>
+        </select>
 
-      <button onClick={handleExcluirTudo}>Excluir Tudo</button>
-      <div>
+        <button className={styles.botaoPerigo} onClick={handleExcluirTudo}>
+          Excluir Tudo
+        </button>
+      </div>
+
+      <p className={styles.resumo}>
+        <span>
+          Total: <strong>{tarefa.length}</strong>
+        </span>
+        <span>
+          Pendentes: <strong>{contagemTarefasFiltradas.pendentes}</strong>
+        </span>
+        <span>
+          Concluídas: <strong>{contagemTarefasFiltradas.concluidas}</strong>
+        </span>
+      </p>
+
+      <div className={styles.contagemCategorias}>
         {Object.entries(contagemPorCategoria).map(([categoria, quantidade]) => (
-          <p key={categoria}>
+          <span key={categoria} className={styles.categoriaBadge}>
             {categoria}: {quantidade}
-          </p>
+          </span>
         ))}
       </div>
 
-
-      <p>
-        Total: {tarefa.length} | Pendentes: {contagemTarefasFiltradas.pendentes}{" "}
-        | Concluídas: {contagemTarefasFiltradas.concluidas}
-      </p>
-      <ul>
-        {tarefasFiltradas.map((item) => (
-          <li key={item.id}>
-            {editarTarefa === item.id ? (
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  handleConfirmarEdicao(item.id, editarTarefaNome);
-                }}
-              >
-                <label htmlFor="nome">Nome da Tarefa:</label>
-                <input
-                  type="text"
-                  id="nome"
-                  name="nome"
-                  placeholder="Nome da Tarefa"
-                  value={editarTarefaNome}
-                  onChange={(e) => setEditarTarefaNome(e.target.value)}
-                />
-                <button>Confirmar Edição</button>
-                <button onClick={handleCancelarEdicao} type="button">
-                  Cancelar Edição
-                </button>
-              </form>
-            ) : (
-              <>
-                <span
-                  onClick={() => handleToggleConcluido(item.id)}
-                  style={{
-                    cursor: "pointer",
-                    textDecoration: item.concluida ? "line-through" : "none",
-                    color: item.prioridade === "Alta" ? "red" : "black",
+      {tarefasFiltradas.length === 0 ? (
+        <p className={styles.listaVazia}>Nenhuma tarefa encontrada.</p>
+      ) : (
+        <ul className={styles.lista}>
+          {tarefasFiltradas.map((item) => (
+            <li
+              key={item.id}
+              className={`${styles.card} ${classePrioridade(item.prioridade)}`}
+            >
+              {editarTarefa === item.id ? (
+                <form
+                  className={styles.formCadastro}
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    handleConfirmarEdicao(item.id, editarTarefaNome);
                   }}
                 >
-                  {item.nome} - {item.prioridade} - {item.categoria}
-                </span>
-                <button onClick={() => handleDelete(item.id)}>X</button>
-                <button onClick={() => handleIniciarEdicao(item.id, item)}>
-                  Editar
-                </button>
-              </>
-            )}
-          </li>
-        ))}
-      </ul>
-      {erro && <p>{erro}</p>}
+                  <label htmlFor="nome">Nome da Tarefa:</label>
+                  <input
+                    className={styles.inputTexto}
+                    type="text"
+                    id="nome"
+                    name="nome"
+                    placeholder="Nome da Tarefa"
+                    value={editarTarefaNome}
+                    onChange={(e) => setEditarTarefaNome(e.target.value)}
+                  />
+                  <button className={styles.botaoPrimario}>
+                    Confirmar Edição
+                  </button>
+                  <button
+                    className={styles.botaoAcao}
+                    onClick={handleCancelarEdicao}
+                    type="button"
+                  >
+                    Cancelar Edição
+                  </button>
+                </form>
+              ) : (
+                <>
+                  <div
+                    className={styles.tarefaInfo}
+                    onClick={() => handleToggleConcluido(item.id)}
+                  >
+                    <span
+                      className={`${styles.tarefaNome} ${
+                        item.concluida ? styles.concluida : ""
+                      }`}
+                    >
+                      {item.nome}
+                    </span>
+                    <span className={styles.tarefaMeta}>
+                      {item.prioridade} • {item.categoria}
+                    </span>
+                  </div>
+                  <button
+                    className={styles.botaoAcao}
+                    onClick={() => handleIniciarEdicao(item.id, item)}
+                  >
+                    Editar
+                  </button>
+                  <button
+                    className={`${styles.botaoAcao} ${styles.botaoExcluir}`}
+                    onClick={() => handleDelete(item.id)}
+                  >
+                    X
+                  </button>
+                </>
+              )}
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }
