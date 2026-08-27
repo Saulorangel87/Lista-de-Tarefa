@@ -6,7 +6,11 @@ const CHAVE_STORAGE = "tarefas";
 export default function FormTarefas() {
   const [tarefa, setTarefas] = useState(() => {
     const dadosSalvo = localStorage.getItem(CHAVE_STORAGE);
+    try {
     return dadosSalvo ? JSON.parse(dadosSalvo) : [];
+    } catch (error) {
+      return [];
+    }
   });
   const [addTarefa, setAddTarefa] = useState("");
   const [erro, setErro] = useState("");
@@ -67,6 +71,12 @@ export default function FormTarefas() {
   function handleCancelarEdicao() {
     setEditarTarefa(null);
     setEditarTarefaNome("");
+  }
+
+  function handleExcluirTudo() {
+    const confirmação = confirm("Tem certeza que deseja excluir todas as tarefas?");
+    if (!confirmação) return;
+    setTarefas([]);
   }
 
   useEffect(() => {
@@ -179,6 +189,7 @@ export default function FormTarefas() {
         <option value="Estudos">Estudos</option>
       </select>
 
+      <button onClick={handleExcluirTudo}>Excluir Tudo</button>
       <div>
         {Object.entries(contagemPorCategoria).map(([categoria, quantidade]) => (
           <p key={categoria}>
@@ -186,6 +197,7 @@ export default function FormTarefas() {
           </p>
         ))}
       </div>
+
 
       <p>
         Total: {tarefa.length} | Pendentes: {contagemTarefasFiltradas.pendentes}{" "}
