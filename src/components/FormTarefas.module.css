@@ -257,3 +257,35 @@
     flex: 1;
   }
 }
+
+/* --- Animações --- */
+@keyframes entrada {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.card {
+  animation: entrada 0.25s ease;
+}
+
+.tarefaNome {
+  transition: color 0.2s ease, text-decoration-color 0.2s ease;
+}
+
+.card .botaoAcao,
+.botaoPrimario,
+.botaoPerigo {
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+
+.card .botaoAcao:active,
+.botaoPrimario:active,
+.botaoPerigo:active {
+  transform: scale(0.96);
+}
