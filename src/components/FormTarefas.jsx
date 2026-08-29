@@ -22,7 +22,8 @@ export default function FormTarefas() {
   const [categoria, setCategoria] = useState("Pessoal");
   const [filtroPrioridade, setFiltroPrioridade] = useState("Todos");
   const [filtroCategoria, setFiltroCategoria] = useState("Todos");
-
+  const [prazo, setPrazo] = useState("");
+  
   function handleSubmit(e) {
     e.preventDefault();
     if (!addTarefa) {
@@ -36,9 +37,11 @@ export default function FormTarefas() {
       concluida: false,
       prioridade: prioridade,
       categoria: categoria,
+      prazo: prazo,
     };
     setTarefas([...tarefa, novaTarefa]);
     setAddTarefa("");
+    setPrazo("");
   }
 
   function handleDelete(id) {
@@ -79,6 +82,14 @@ export default function FormTarefas() {
     );
     if (!confirmação) return;
     setTarefas([]);
+  }
+
+  function formatarPrazo(prazo) {
+    if (!prazo) return "Sem prazo";
+  
+    const [ano, mes, dia] = prazo.split("-");
+  
+    return `${dia}/${mes}/${ano}`;
   }
 
   useEffect(() => {
@@ -162,6 +173,13 @@ export default function FormTarefas() {
           <option value="Trabalho">Trabalho</option>
           <option value="Estudos">Estudos</option>
         </select>
+        <input
+          className={styles.inputTexto}
+          type="date"
+          value={prazo}
+          onChange={(e) => setPrazo(e.target.value)}
+        />
+
         <button className={styles.botaoPrimario}>Adicionar Tarefas</button>
         {erro && <p className={styles.mensagemErro}>{erro}</p>}
       </form>
@@ -284,7 +302,7 @@ export default function FormTarefas() {
                       {item.nome}
                     </span>
                     <span className={styles.tarefaMeta}>
-                      {item.prioridade} • {item.categoria}
+                      {item.prioridade} • {item.categoria} • Prazo: {formatarPrazo(item.prazo)}
                     </span>
                   </div>
                   <button
